@@ -2,62 +2,303 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>역사기행 목록</title>
+    <style>
+        /* 기본 스타일 리셋 및 고전풍 폰트 설정 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: "Georgia", "Times New Roman", "ChosunMyeongjo", "Nanum Myeongjo", serif;
+            background-color: #f4efe6; /* 빛바랜 종이 느낌의 크림색 */
+            color: #3e3226; /* 깊은 브라운 톤 */
+            line-height: 1.7;
+            padding: 50px 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* 헤더 디자인 (고전 도서 타이틀 스타일) */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-bottom: 25px;
+            border-bottom: 1px double #c5b49e;
+        }
+        h1 {
+            font-size: 2.4rem;
+            color: #2b1f15;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        header p {
+            color: #7a6855;
+            margin-top: 12px;
+            font-size: 1.05rem;
+            font-style: italic;
+        }
+
+        /* 섹션 카드 디자인 (오래된 서적/문서 패널 스타일) */
+        .travel-section {
+            background: #fdfbf7;
+            border: 1px solid #e3dac9;
+            border-radius: 4px;
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 10px rgba(43, 31, 21, 0.04);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .travel-section:hover {
+            border-color: #baa085;
+            box-shadow: 0 6px 15px rgba(43, 31, 21, 0.07);
+        }
+
+        /* 섹션 헤더 및 배지 */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eae1d4;
+            padding-bottom: 15px;
+        }
+        h2 {
+            font-size: 1.35rem;
+            color: #2b1f15;
+            font-weight: 700;
+        }
+        .badge-container {
+            display: flex;
+            gap: 6px;
+        }
+        .badge {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 0.75rem;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-weight: 500;
+            background-color: #eae1d4;
+            color: #5c4d3c;
+            border: 1px solid #dcd0be;
+        }
+
+        /* ⭐️ 클릭 인식 강화를 위한 링크/리스트 스타일 */
+        ul {
+            list-style: none;
+        }
+        .link-list > li {
+            margin-bottom: 14px;
+        }
+        .link-list > li:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* 기본 상태: 점선과 화살표로 링크임을 명시 */
+        a {
+            color: #4e5d6c; /* 차분한 블루그레이로 텍스트와 구분 */
+            text-decoration: none;
+            border-bottom: 1px dashed #b8c4ce; 
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            padding-bottom: 2px;
+        }
+        a::after {
+            content: " →";
+            font-size: 0.9rem;
+            margin-left: 6px;
+            opacity: 0.6;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        
+        /* 호버 상태: 선명한 색상 피드백 및 모션 */
+        a:hover {
+            color: #1a5fb4; /* 선명한 블루 컬러로 변경 */
+            border-bottom: 1px solid #1a5fb4; /* 실선 변경 */
+            padding-left: 2px;
+        }
+        a:hover::after {
+            opacity: 1;
+            transform: translateX(4px); /* 화살표가 오른쪽으로 움직임 */
+        }
+
+        /* 서브 카테고리 (오사카~교토 타임라인 스타일) */
+        .sub-category {
+            margin-top: 25px;
+            padding-left: 20px;
+            border-left: 1px dashed #c5b49e;
+        }
+        .sub-category-title {
+            font-size: 1.05rem;
+            color: #5c4d3c;
+            font-weight: 700;
+            margin: 24px 0 10px 0;
+            position: relative;
+        }
+        .sub-category-title::before {
+            content: "▣";
+            font-size: 0.8rem;
+            position: absolute;
+            left: -26px;
+            background: #fdfbf7;
+            color: #baa085;
+            padding: 2px 0;
+        }
+        .sub-category .link-list {
+            padding-left: 5px;
+        }
+
+        /* 빈 섹션 스타일 (원고지/오래된 문서 느낌 마감) */
+        .empty-section {
+            background: #f5f0e6;
+            border: 1px dashed #c5b49e;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+        .empty-section:hover {
+            border-color: #c5b49e;
+            box-shadow: none;
+        }
+        .empty-section h2 {
+            color: #7a6855;
+        }
+        .empty-text {
+            color: #9c8a77;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* 반응형 모바일 스타일 */
+        @media (max-width: 600px) {
+            body { padding: 30px 12px; }
+            h1 { font-size: 1.9rem; }
+            .travel-section { padding: 22px; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .sub-category { padding-left: 15px; }
+            .sub-category-title::before { left: -21px; }
+        }
+    </style>
 </head>
 <body>
-<H1>역사기행 목록</H1>
-<H2>공주와 부여 역사기행: 백제 및 동학</H2> <UL>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0KADxETxnJP6WHnLu97KBwGrYmDuseq76RM9NQ4pAG2G1CbvHeY67bSjxreBBMzsnl">개요</a>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid02gLj9w45Q6gXpKDLK4uEmspb2apuoihmdp7Yjc66jM95xnty2GAkeoSRwqLMvyi5Cl">웅진백제 공주</a> 
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0snHjKgkCJZdsM5ZCKh83MW27VR5aUkdmedhSZSjWAa7j9ZWrcQ39rwBU1kRG5F1Zl">사비백제 부여</a> 
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid025hG9mCbMwLrMeNUQ4aar1gvtryBZNeXeN1trXqLRWxZY1D8oNgFgZzhU16xZEsP9l"">신석기 송국리 문화</a> 
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid02scEx543sJZ1YNr4WDu4M9ZP6i2eMg92P2AUXuN584xshR4aTMDrMDPcHruwCoN6pl">동학전적 우금치</a> 
-</UL>
-<H2>강원도 역사기행: 신라 선종, 동학, 3.1운동</H2> <UL>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid02gsdkheJifbUWCDZyu67AaKr8RevoMtE5zUPC36Z7WEsqRhfJ73YLnV3GEnHHHgGCl">양양 진전사의 신라 선종</a> 
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0335ttHqzTwosdciHxnAcN586iZyWTcSftDzMQ3X65FWyZkQJuEoQsEMavAQAV6nP4l">강원도의 동학</a> 
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0bxhtzsTn9KXBE5p6dN6t35f96pZY5PaZge6xUtLTqxfHCYnN4SMbaNTBqAWxbDCpl">강원도의 3.1운동</a> 
-</UL>
-<H2>오사카~교토</H2>
-<UL>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid02GwTtSJELKe74VmXZdUBWxDc6t6FznfKAVrad341BzXWGuMm2TjzXQhxi3AhAMmM9l">개요 </a> 
-<LI>아스카 시대
-<UL>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0fQUhzGxFfPMNEzoGUK6QRHsNb2uJkSiGhYaFo5sJs4yq2SFysxA44x3F2ktwi2Dal">법륭사, 쇼토쿠 태자</a>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0YejysJifbgEoLhgvVj23dB3ShBEVUu1YyyrKg5iSM3aK3TVwwfthCakPMVQmect5l">광륭사, 흥복사, 오사카 나니와궁 </a>
-</UL>
-<LI>나라 시대
-<UL>
-<LI> <a href="https://www.facebook.com/bychoi/posts/pfbid02eHPUNGEQvLgbrhZuFAnfoUgUn66LgZTDJRSUvt2hKGJFtf6w6caXyAzYozmDTKNdl">동대사</a> 
-<LI> <a href="https://www.facebook.com/bychoi/posts/pfbid0SNdobcS4R1BT4qwBrE7Qy6VLMWiK2GGbZZP1AZoGotGpRBgPqTMVsPf9HjdL68BFl"> 청수사</a>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid02tAbQMJFdx5PL2kFJsS2k1KuFmnkjN1wNS3paCpM9dWVZSJoWfmYeCpSM1UzBb8bEl">신사: 야사카 신사, 후시미 이나리 신사</a>
-</UL>
-<LI>헤이안 시대
-<UL>
-<LI> <a href="https://www.facebook.com/bychoi/posts/pfbid01Db3tjXwZHVxuhSM5Cucx6kNSjGFZEbXkCmiDLGXhTiChhCK4n8hD2uC1R1NUTfhl"> 평등원</a>
-<LI> <a href="https://www.facebook.com/bychoi/posts/pfbid0XrmHhyyYkqkNF7tGnbQPvT1eGHLkvSUDee1diaXoZFRad6SKLzpf7j72nNFirNZGl"> 삼십삼간당</a>
-</UL>
-<LI>무로마치 막부
-<UL>
-<LI> <a href="https://www.facebook.com/bychoi/posts/pfbid02WekzRcekQDE6VBoMAvcU8hQGRt5Weotq2EBXmArW258WtzP6qYaTEQgp9oLtY8A9l"> 천룡사</a>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0K8WAWiKy8rAB58L56hhHc2sW4zGFq9Dbj5HMiqNrw8g6qRN4ndm3k3Yr8bTh3qx8l"> 금각사와 은각사 </a>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid02rDLspNET4zPxDJK2aJ93WcZjMJmohGPVM8aW8zyw3xpgc6LXLtHAfgsmsGNJSHX4l">용안사와 오유지족</a> 
-</UL>
-<LI>전국시대
-<UL>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid0232eUgUgyDf4vxrEhQ1rMZ9JSTeoyS9N8X27HJy2mR2nBN62ghAfq2janjCG6JjmSl"> 오사카성, 귀무덤 </a>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid036nX9Lp8HimNDdTxP1GPiHgm4QtdZk455NLrvq4PzSnS5nwbRrG89fzdZpFymnNyul">가부키의 시작 </a> 
-</UL>
-<LI>근현대
-<UL>
-<LI><a href="https://www.facebook.com/bychoi/posts/pfbid04eZwMzfK3gT63arowWLngEdCFrU6JGrLfAoc5tmw1b8RhGVDNseT8ewdYb81M4uZl">철학의 길, 남선사 수로각, 오사카 역사박물관</a> 
-</UL>
-</UL>
-<H2>경주 역사기행: 신라</H2>
-<UL>
-</UL>
-<H2>전북 역사기행: 동학</H2>
-<UL>
-</UL>
+
+<div class="container">
+    <header>
+        <h1>역사기행 목록</h1>
+        <p>발길 따라가는 과거로의 시간 여행</p>
+    </header>
+
+    <section class="travel-section">
+        <div class="section-header">
+            <h2>공주와 부여 역사기행</h2>
+            <div class="badge-container">
+                <span class="badge">백제</span>
+                <span class="badge">동학</span>
+            </div>
+        </div>
+        <ul class="link-list">
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid0KADxETxnJP6WHnLu97KBwGrYmDuseq76RM9NQ4pAG2G1CbvHeY67bSjxreBBMzsnl">개요</a></li>
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid02gLj9w45Q6gXpKDLK4uEmspb2apuoihmdp7Yjc66jM95xnty2GAkeoSRwqLMvyi5Cl">웅진백제 공주</a></li>
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid0snHjKgkCJZdsM5ZCKh83MW27VR5aUkdmedhSZSjWAa7j9ZWrcQ39rwBU1kRG5F1Zl">사비백제 부여</a></li>
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid025hG9mCbMwLrMeNUQ4aar1gvtryBZNeXeN1trXqLRWxZY1D8oNgFgZzhU16xZEsP9l">신석기 송국리 문화</a></li>
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid02scEx543sJZ1YNr4WDu4M9ZP6i2eMg92P2AUXuN584xshR4aTMDrMDPcHruwCoN6pl">동학전적 우금치</a></li>
+        </ul>
+    </section>
+
+    <section class="travel-section">
+        <div class="section-header">
+            <h2>강원도 역사기행</h2>
+            <div class="badge-container">
+                <span class="badge">신라 선종</span>
+                <span class="badge">동학</span>
+                <span class="badge">3.1운동</span>
+            </div>
+        </div>
+        <ul class="link-list">
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid02gsdkheJifbUWCDZyu67AaKr8RevoMtE5zUPC36Z7WEsqRhfJ73YLnV3GEnHHHgGCl">양양 진전사의 신라 선종</a></li>
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid0335ttHqzTwosdciHxnAcN586iZyWTcSftDzMQ3X65FWyZkQJuEoQsEMavAQAV6nP4l">강원도의 동학</a></li>
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid0bxhtzsTn9KXBE5p6dN6t35f96pZY5PaZge6xUtLTqxfHCYnN4SMbaNTBqAWxbDCpl">강원도의 3.1운동</a></li>
+        </ul>
+    </section>
+
+    <section class="travel-section">
+        <div class="section-header">
+            <h2>오사카 ~ 교토 역사기행</h2>
+            <div class="badge-container">
+                <span class="badge">일본사</span>
+            </div>
+        </div>
+        <ul class="link-list">
+            <li><a href="https://www.facebook.com/bychoi/posts/pfbid02GwTtSJELKe74VmXZdUBWxDc6t6FznfKAVrad341BzXWGuMm2TjzXQhxi3AhAMmM9l"><strong>개요 안내</strong></a></li>
+        </ul>
+
+        <div class="sub-category">
+            <h3 class="sub-category-title">아스카 시대</h3>
+            <ul class="link-list">
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid0fQUhzGxFfPMNEzoGUK6QRHsNb2uJkSiGhYaFo5sJs4yq2SFysxA44x3F2ktwi2Dal">법륭사, 쇼토쿠 태자</a></li>
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid0YejysJifbgEoLhgvVj23dB3ShBEVUu1YyyrKg5iSM3aK3TVwwfthCakPMVQmect5l">광륭사, 흥복사, 오사카 나니와궁</a></li>
+            </ul>
+
+            <h3 class="sub-category-title">나라 시대</h3>
+            <ul class="link-list">
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid02eHPUNGEQvLgbrhZuFAnfoUgUn66LgZTDJRSUvt2hKGJFtf6w6caXyAzYozmDTKNdl">동대사</a></li>
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid0SNdobcS4R1BT4qwBrE7Qy6VLMWiK2GGbZZP1AZoGotGpRBgPqTMVsPf9HjdL68BFl">청수사</a></li>
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid02tAbQMJFdx5PL2kFJsS2k1KuFmnkjN1wNS3paCpM9dWVZSJoWfmYeCpSM1UzBb8bEl">신사: 야사카 신사, 후시미 이나리 신사</a></li>
+            </ul>
+
+            <h3 class="sub-category-title">헤이안 시대</h3>
+            <ul class="link-list">
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid01Db3tjXwZHVxuhSM5Cucx6kNSjGFZEbXkCmiDLGXhTiChhCK4n8hD2uC1R1NUTfhl">평등원</a></li>
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid0XrmHhyyYkqkNF7tGnbQPvT1eGHLkvSUDee1diaXoZFRad6SKLzpf7j72nNFirNZGl">삼십삼간당</a></li>
+            </ul>
+
+            <h3 class="sub-category-title">무로마치 막부</h3>
+            <ul class="link-list">
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid02WekzRcekQDE6VBoMAvcU8hQGRt5Weotq2EBXmArW258WtzP6qYaTEQgp9oLtY8A9l">천룡사</a></li>
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid0K8WAWiKy8rAB58L56hhHc2sW4zGFq9Dbj5HMiqNrw8g6qRN4ndm3k3Yr8bTh3qx8l">금각사와 은각사</a></li>
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid02rDLspNET4zPxDJK2aJ93WcZjMJmohGPVM8aW8zyw3xpgc6LXLtHAfgsmsGNJSHX4l">용안사와 오유지족</a></li>
+            </ul>
+
+            <h3 class="sub-category-title">전국시대</h3>
+            <ul class="link-list">
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid0232eUgUgyDf4vxrEhQ1rMZ9JSTeoyS9N8X27HJy2mR2nBN62ghAfq2janjCG6JjmSl">오사카성, 귀무덤</a></li>
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid036nX9Lp8HimNDdTxP1GPiHgm4QtdZk455NLrvq4PzSnS5nwbRrG89fzdZpFymnNyul">가부키의 시작</a></li>
+            </ul>
+
+            <h3 class="sub-category-title">근현대</h3>
+            <ul class="link-list">
+                <li><a href="https://www.facebook.com/bychoi/posts/pfbid04eZwMzfK3gT63arowWLngEdCFrU6JGrLfAoc5tmw1b8RhGVDNseT8ewdYb81M4uZl">철학의 길, 남선사 수로각, 오사카 역사박물관</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="travel-section empty-section">
+        <div class="section-header">
+            <h2>경주 역사기행</h2>
+            <div class="badge-container">
+                <span class="badge">신라</span>
+            </div>
+        </div>
+        <p class="empty-text">기록을 준비 중입니다.</p>
+    </section>
+
+    <section class="travel-section empty-section">
+        <div class="section-header">
+            <h2>전북 역사기행</h2>
+            <div class="badge-container">
+                <span class="badge">동학</span>
+            </div>
+        </div>
+        <p class="empty-text">기록을 준비 중입니다.</p>
+    </section>
+</div>
+
 </body>
 </html>
